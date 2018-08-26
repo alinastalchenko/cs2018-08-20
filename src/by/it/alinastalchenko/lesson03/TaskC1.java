@@ -3,9 +3,6 @@ package by.it.alinastalchenko.lesson03;
 /*
 Lesson 03. Конвертер температуры
 
-Метод convertCelsiumToFahrenheit(int celsium) принимает значение в градусах Цельсия.
-Метод должен переводить температуру и возвращать значение в градусах Фаренгейта.
-
 Температура по Цельсию TC и температура по Фаренгейту TF связаны следующим соотношением:
 TC = (TF – 32) * 5/9
 
@@ -26,7 +23,13 @@ TC = (TF – 32) * 5/9
 
 class TaskC1 {
 
-
+    public static double convertCelsiumToFahrenheit(int TC) {
+        //напишите тут ваш код
+        double TF;
+        TF = TC * 9/5 + 32;
+        return TF;
+    }
+}
 
 
 
