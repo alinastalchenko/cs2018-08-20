@@ -26,6 +26,4 @@ package by.it.alinastalchenko.lesson04;
 
 
 
-public class TaskB3 {
 
-}
