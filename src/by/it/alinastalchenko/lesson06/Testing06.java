@@ -1,8 +1,9 @@
-package by.it._tasks_.lesson03;
+package by.it.alinastalchenko.lesson06;
 
 import org.junit.Test;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
 import static org.junit.Assert.*;
@@ -10,71 +11,145 @@ import static org.junit.Assert.*;
 @SuppressWarnings("all") //море warnings. всех прячем.
 
 //поставьте курсор на следующую строку и нажмите Ctrl+Shift+F10
-public class Testing03 {
-
+public class Testing06 {
 
     @Test(timeout = 2500)
     public void testTaskA1() throws Exception {
-        run("7 2").include("9 5 14 3 1\n9.0 5.0 14.0 3.5 1.0");
+        run("").include("Шарик 5").include("Тузик 3");
+
+        System.out.println("Проверка класса Dog");
+        Class cl = findClass("Dog");
+        assert cl != null;
+
+        Object dog = cl.newInstance();
+        assert dog != null;
+
+        findMethod(cl, "setName", String.class).invoke(dog, "Шарик");
+        assertEquals("\nИмя не прочиталось ", "Шарик", (String) findMethod(cl, "getName").invoke(dog));
+
+        findMethod(cl, "setAge", int.class).invoke(dog, 5);
+        assertEquals("\nВозраст не прочитался ", 5, (int) findMethod(cl, "getAge").invoke(dog));
+        System.out.println("Проверка класса Dog - OK");
     }
+
 
     @Test(timeout = 2500)
     public void testTaskA2() throws Exception {
-        Testing03 testing = run("");
-        String[] lines = testing.stringWriter.toString().trim().split("\\n");
-        if (lines.length < 5)
-            fail("Недостаточно строк");
-        if (!lines[0].trim().equalsIgnoreCase("Мое любимое стихотворение:") &&
-            !lines[0].trim().equalsIgnoreCase("Моё любимое стихотворение:"))
-            fail("Нет заголовка: Мое любимое стихотворение:");
-        String old = "old";
-        for (String s : lines) {
-            if (s.length() < 10 && s.length()>1)
-                fail("Слишком короткие строки");
-            if (old.equals(s))
-                fail("Есть одинаковые строки");
-            old = s;
-        }
+        run("").include("Кличка: Шарик. Возраст: 5").include("Кличка: Тузик. Возраст: 3");
+
+        System.out.println("Проверка класса Dog");
+        Class cl = findClass("Dog");
+        assert cl != null;
+
+        Object dog = cl.newInstance();
+        assert dog != null;
+
+        findMethod(cl, "setName", String.class).invoke(dog, "Шарик");
+        assertEquals("\nИмя не прочиталось ", "Шарик", (String) findMethod(cl, "getName").invoke(dog));
+
+        findMethod(cl, "setAge", int.class).invoke(dog, 5);
+        assertEquals("\nВозраст не прочитался ", 5, (int) findMethod(cl, "getAge").invoke(dog));
+
+        assertEquals("\ntoString() не работает как ожидается ", "Кличка: Шарик. Возраст: 5", (String) findMethod(cl, "toString").invoke(dog));
+        System.out.println("Проверка класса Dog - OK");
     }
 
     @Test(timeout = 2500)
     public void testTaskB1() throws Exception {
-        run("").include("575.222")
-                .include("111.111 ")
-                .include("7 73 273 ")
-                .include("111.111");
+        System.out.println("Проверка класса Dog");
+        Class cl = findClass("Dog");
+        assert cl != null;
+
+        //create dogs
+        int count = 10;
+        Object[] dogs = (Object[]) Array.newInstance(cl, count);
+        double controlAge = 0;
+        for (int i = 0; i < dogs.length; i++) {
+            Object dog = cl.newInstance();
+            assert dog != null;
+            findMethod(cl, "setName", String.class).invoke(dog, "dog" + i);
+            int age = (i + 1);
+            findMethod(cl, "setAge", int.class).invoke(dog, age);
+            controlAge = controlAge + age;
+            dogs[i] = dog;
+        }
+        controlAge = controlAge / dogs.length;
+
+        Class hlp = findClass("DogHelper");
+        assert hlp != null;
+
+        //ищем метод вывода имен
+        findMethod(hlp, "printAllNames", dogs.getClass());
+
+        //ищем метод расчета среднего
+        Method averageAge = findMethod(hlp, "averageAge", dogs.getClass());
+        double avg = (double) averageAge.invoke(null, new Object[]{dogs});
+        assertEquals("Ожидается другой возраст для 10 тестовых собак", controlAge, avg, 0.001);
+
+        System.out.println("Проверка класса Dog - OK");
+        //проверка запуска на 5 ожидаемых собаках
+        run("").include("Шарик Жучка Бобик Барбос Полкан").include("3.0");
+
     }
 
-    @Test(timeout = 2500)
-    public void testTaskB2() throws Exception {
-        run("2 5 3").include("-1.0").include("-1.5");
-        run("2 4 2").include("-1.0\n");
-        run("2 2 2").include("Отрицательный дискриминант");
-    }
 
     @Test(timeout = 2500)
     public void testTaskC1() throws Exception {
-        try {
-            Method m = run("").aClass.getDeclaredMethod("convertCelsiumToFahrenheit", int.class);
-            assertEquals(104.0, (double) m.invoke(null, 40), 1e-22);
-            assertEquals(68.0, (double) m.invoke(null, 20), 1e-22);
-            assertEquals(32.0, (double) m.invoke(null, 0), 1e-22);
-        } catch (NoSuchMethodException e) {
-            org.junit.Assert.fail("Метод convertCelsiumToFahrenheit не найден или не работает");
-        }
-    }
+        Class cl = findClass("Dog");
+        assert cl != null;
 
-    @Test(timeout = 2500)
-    public void testTaskC2() throws Exception {
-        try {
-        Method m = run("").aClass.getDeclaredMethod("sumDigitsInNumber", int.class);
-        assertEquals((int) m.invoke(null, 5467), 22);
-        assertEquals((int) m.invoke(null, 5555), 20);
-        assertEquals((int) m.invoke(null, 1111), 4);
-        assertEquals((int) m.invoke(null, 9993), 30);
-        } catch (NoSuchMethodException e) {
-            org.junit.Assert.fail("Метод sumDigitsInNumber не найден");
+        for (int i = 1; i < 25; i++) {
+            //Шансы на победу = 0.2 * возраст + 0.3 * вес + 0.5 * силу укуса.
+            String n1 = "dog" + i;
+            String n2 = "pup" + i;
+            int age1 = 1+(int) (Math.random() * 10);
+            int age2 = 1+(int) (Math.random() * 10);
+            int w1 = 1+(int) (Math.random() * 10);
+            int w2 = 1+(int) (Math.random() * 10);
+            double p1 = 1.1+(int)(Math.random() * 15);
+            double p2 = 1.1+(int)(Math.random() * 15);
+            double win1 = 0.2 * age1 + 0.3 * w1 + 0.5 * p1;
+            double win2 = 0.2 * age2 + 0.3 * w2 + 0.5 * p2;
+            boolean expected = win1 > win2;
+
+            //делаем собак
+            Object dog1 = cl.newInstance();
+            Object dog2 = cl.newInstance();
+            assert dog1 != null;
+            assert dog2 != null;
+
+            findMethod(cl, "setName", String.class).invoke(dog1, n1);
+            findMethod(cl, "setAge", int.class).invoke(dog1, age1);
+            findMethod(cl, "setWeight", int.class).invoke(dog1, w1);
+            findMethod(cl, "setPower", double.class).invoke(dog1, p1);
+
+            findMethod(cl, "setName", String.class).invoke(dog2, n2);
+            findMethod(cl, "setAge", int.class).invoke(dog2, age2);
+            findMethod(cl, "setWeight", int.class).invoke(dog2, w2);
+            findMethod(cl, "setPower", double.class).invoke(dog2, p2);
+
+            System.out.println("--------- Начало эксперимента ----------------");
+            //определим победителя
+            boolean actual = (boolean) findMethod(cl, "win", cl).invoke(dog1, dog2);
+            System.out.println("1) "+n1+ " Шанс:"+win1+"\n2) "+n2+" Шанс:"+win2);
+            if (expected)
+                System.out.println("По тесту должен победить "+n1);
+            else
+                System.out.println("По тесту должен победить "+n2);
+            assertEquals("Победитель определен неверно", expected, actual);
+
+            //проверим их же через run
+            String in = String.format(
+                    "%s\n%d\n%d\n%f\n" + "%s\n%d\n%d\n%f\n",
+                    n1, age1, w1, p1,
+                    n2, age2, w2, p2
+            );
+            System.out.println("------- Проверка поединка через ввод с клавиатуры ------");
+            run(in).include((expected)?n1:n2);
+            System.out.println("--------- Конец эксперимента ----------------\n\n");
+
         }
+
     }
 
 
@@ -84,7 +159,6 @@ public class Testing03 {
     Но изучить как он работает - можно, это всегда будет полезно.
     ===========================================================================================================
      */
-
     private Class findClass(String SimpleName) {
         String full = this.getClass().getName();
         String dogPath = full.replace(this.getClass().getSimpleName(), SimpleName);
@@ -117,7 +191,7 @@ public class Testing03 {
 
     //метод находит и создает класс для тестирования
     //по имени вызывающего его метода, testTaskA1 будет работать с TaskA1
-    private static Testing03 run(String in) {
+    private static Testing06 run(String in) {
         Throwable t = new Throwable();
         StackTraceElement trace[] = t.getStackTrace();
         StackTraceElement element;
@@ -134,10 +208,10 @@ public class Testing03 {
         System.out.println("\n---------------------------------------------");
         System.out.println("Старт теста для " + clName + "\ninput:" + in);
         System.out.println("---------------------------------------------");
-        return new Testing03(clName, in);
+        return new Testing06(clName, in);
     }
 
-    public Testing03() {
+    public Testing06() {
         //Конструктор тестов
     }
 
@@ -145,16 +219,13 @@ public class Testing03 {
     //    private Testing(String className) {
     //        this(className, "");
     //    }
-    private String className;
-    Class<?> aClass;
-    //Основной конструктор тестов
-    private Testing03(String className, String in) {
-        //this.className = className;
-        aClass = null;
-        try {
-            aClass = Class.forName(className);
-            this.className = className;
 
+    //Основной конструктор тестов
+    private Testing06(String className, String in) {
+        //this.className = className;
+        Class<?> c = null;
+        try {
+            c = Class.forName(className);
         } catch (ClassNotFoundException e) {
             fail("Не найден класс " + className);
         }
@@ -170,7 +241,7 @@ public class Testing03 {
         System.setOut(newOut); //перехват стандартного вывода
         try {
             Class[] argTypes = new Class[]{String[].class};
-            Method main = aClass.getDeclaredMethod("main", argTypes);
+            Method main = c.getDeclaredMethod("main", argTypes);
             main.invoke(null, (Object) new String[]{});
 
         } catch (Exception x) {
@@ -180,18 +251,18 @@ public class Testing03 {
     }
 
     //проверка вывода
-    private Testing03 is(String str) {
+    private Testing06 is(String str) {
         assertTrue("Ожидается такой вывод:\n<---начало---->\n" + str + "<---конец--->",
                 stringWriter.toString().equals(str));
         return this;
     }
 
-    private Testing03 include(String str) {
+    private Testing06 include(String str) {
         assertTrue("Строка не найдена: " + str + "\n", stringWriter.toString().contains(str));
         return this;
     }
 
-    private Testing03 exclude(String str) {
+    private Testing06 exclude(String str) {
         assertTrue("Лишние данные в выводе: " + str + "\n", !stringWriter.toString().contains(str));
         return this;
     }
@@ -233,4 +304,5 @@ public class Testing03 {
             }
         });
     }
+
 }
