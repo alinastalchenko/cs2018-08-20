@@ -30,22 +30,31 @@ package by.it.alinastalchenko.lesson06;
 
 
 public class Dog {
-    public static void main(String[] args) {
-        Dog dog1 = new Dog();
-        dog1.setName("Шарик");
-        dog1.setAge(5);
-        Dog dog2 = new Dog();
-        dog2.setName("Тузик");
-        dog2.setAge(3);
-        System.out.println(dog1.getName() + " " + dog1.getAge());
-        System.out.println(dog1.getName() + " " + dog2.getAge());
+    private String name;
+    private int age;
+    public Dog(String name, int age) {
+        this.name = name;
+        this.age = age;
     }
-public void setAge (int age){
-    this.age=age;
+    public Dog() {
     }
+    public String getName(){
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public int getAge() {
+        return age;
+    }
+    public void setAge(int age) {
+        this.age = age;
+    }
+    @Override
     public String toString() {
         return String.format("Кличка: %s. Возраст: %d",name,age);
-        return "Кличка"
     }
-}
+    }
+
+
 

@@ -25,5 +25,10 @@ package by.it.alinastalchenko.lesson06;
 
 */
 public class TaskA2 {
-
+    public static void main(String[] args) {
+        Dog dog1 = new Dog(name:"Шарик", age:5));
+        Dog dog2 = new Dog(name:"Тузик", age:3);
+        System.out.println(dog1);
+        System.out.println(dog2);
+    }
 }

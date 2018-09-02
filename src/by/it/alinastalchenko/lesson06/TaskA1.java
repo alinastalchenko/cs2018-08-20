@@ -30,7 +30,7 @@ package by.it.alinastalchenko.lesson06;
 
 
 public class TaskA1 {
-    public static void main(String[] args) {
+     public static void main(String[] args) {
         Dog dog1 = new Dog();
         dog1.setName("Шарик");
         dog1.setAge(5);
@@ -38,16 +38,7 @@ public class TaskA1 {
         dog2.setName("Тузик");
         dog2.setAge(3);
         System.out.println(dog1.getName() + " " + dog1.getAge());
-        System.out.println(dog1.getName() + " " + dog2.getAge());
+        System.out.println(dog2.getName() + " " + dog2.getAge());
     }
-    public void setAge (int age){
-        this.age=age;
-    }
-    public String toString(){
-        return "Dog{"+
-                "name=" + name +'\''+
-                ", age="+age+
-                '}';
-    }
-    }
+      }
 
